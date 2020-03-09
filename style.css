@@ -1,3 +1,37 @@
 canvas {
+    position: absolute;
+    top:0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin:auto;
     border: 15px solid #000000;
+}
+
+#retry-game{
+ 
+  margin: 0 auto;
+  position: absolute;
+  left: 800px;
+  top: 800px;
+  padding: 15px 25px;
+  font-size: 24px;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  outline: none;
+  color: #fff;
+  background-color: #4CAF50;
+  border: none;
+  border-radius: 15px;
+  box-shadow: 0 9px #999;
+  visibility: hidden;
+}
+
+#rety-game:hover {background-color: #3e8e41}
+
+#retry-game:active {
+  background-color: #3e8e41;
+  box-shadow: 0 5px #666;
+  transform: translateY(4px);
 }
