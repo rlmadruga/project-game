@@ -208,9 +208,11 @@ window.onload = () => {
         x: 50,
         y: 50,
         update: function(text){
-            gameArea.context.fillStyle = "gray";
-            gameArea.context.font = "30px Arial";
+            gameArea.context.fillStyle = "white";
+            //gameArea.context.strokeStyle = "black";
+            gameArea.context.font = "50px VT323";
             gameArea.context.fillText(text, this.x, this.y);
+            //gameArea.context.strokeText(text, this.x, this.y);
         }
     }
 
@@ -218,9 +220,11 @@ window.onload = () => {
         x: 800, 
         y: 50, 
         update: function(text){
-            gameArea.context.fillStyle = "gray";
-            gameArea.context.font = "30px Arial";
+            gameArea.context.fillStyle = "white";
+            //gameArea.context.strokeStyle = "black";
+            gameArea.context.font = "50px VT323";
             gameArea.context.fillText(text, this.x, this.y);
+           // gameArea.context.strokeText(text, this.x, this.y);
         }
     }
 

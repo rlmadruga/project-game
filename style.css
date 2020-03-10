@@ -1,3 +1,10 @@
+@import url('https://fonts.googleapis.com/css?family=VT323&display=swap');
+
+html, body {
+  font-family: 'VT323', monospace;
+  min-height: 100%;}
+
+
 canvas {
     position: absolute;
     top:0;
@@ -8,10 +15,27 @@ canvas {
     border: 15px solid #000000;
 }
 
-#retry-game{
+body{
+    width: auto;
+    height: 100%;
+    background-image: url("./images/7.png");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    /*overflow: hidden;
+    /* background-position: center;
+    background-repeat: no-repeat;
+    background-size: 100%; */
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
+}
+
+#retry-game, #start-game{
  
   margin: 0 auto;
   position: absolute;
+  font-family: inherit;
   left: 800px;
   top: 800px;
   padding: 15px 25px;
@@ -21,17 +45,25 @@ canvas {
   text-decoration: none;
   outline: none;
   color: #fff;
-  background-color: #4CAF50;
+  background-color: #B37746;/* #4CAF50;  */
   border: none;
-  border-radius: 15px;
+  border-radius: 5px;
   box-shadow: 0 9px #999;
   visibility: hidden;
+  font-weight: 600;
+  letter-spacing: 2px;
+  
 }
 
-#rety-game:hover {background-color: #3e8e41}
+#start-game{
+  visibility: visible;
+}
 
-#retry-game:active {
-  background-color: #3e8e41;
+#rety-game:hover  {background-color: #FFA357;} 
+#start-game:hover {background-color: #FFA357;} /*  #3e8e41} */
+
+#retry-game:active, #start-game:active {
+  background-color: #FFBE8A;
   box-shadow: 0 5px #666;
   transform: translateY(4px);
 }
