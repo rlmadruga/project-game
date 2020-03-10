@@ -12,7 +12,7 @@ canvas {
     left: 0;
     right: 0;
     margin:auto;
-    border: 15px solid #000000;
+    border: 1px solid gray;
 }
 
 body{
@@ -29,6 +29,26 @@ body{
     image-rendering: pixelated;
     image-rendering: -moz-crisp-edges;
     image-rendering: crisp-edges;
+}
+
+img{
+  position: absolute; top: 50px; left: 500px;
+}
+
+p{
+  background-color: hsla(27, 44%, 49%, 0.8);
+  color: white;
+  font-size: 70px;
+  position: absolute;
+  top: 20%;
+  left: 97%;
+  width: 200px;
+  height: 220px;
+  text-align: center;
+  font-style: italic;
+  font-weight: 900;
+  border-radius: 5px;
+  text-shadow: 1px 1px 1px #000000;
 }
 
 #retry-game, #start-game{
