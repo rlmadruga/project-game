@@ -43,9 +43,94 @@ window.onload = () => {
     //var audioGameOver = document.getElementById("audioGameOver");
     //var colors = ["black", "red", "green"];
 
+    //-----GAME CONTROL
+    var gameArea = {
+
+        canvas: document.createElement("canvas"),
+
+        start: function() {
+            this.canvas.height = 600;
+            this.canvas.width =  1200;
+            document.body.insertBefore(this.canvas, document.body.childNodes[0]);
+            this.context = this.canvas.getContext("2d");
+            this.gameSpeed = 3;
+            this.gravity = 1;
+            this.frame = 0;
+            this.score = 0;
+            this.highScore = 0;
+            // this.pause = false;
+            console.log(this.highScore);
+            scoreText.update("SCORE: 0");
+
+
+            if(window.localStorage.getItem('highScore'))
+            {
+                this.highScore = window.localStorage.getItem('highScore');
+            }
+            highScoreText.update("HIGHSCORE: " + this.highScore);
+
+            gameLoop = window.requestAnimationFrame(updateGame);            
+        },
+
+        clear: function () {
+            gameArea.context.clearRect(0,0, this.canvas.width, this.canvas.height);
+        },
+
+        stop: function (){
+            // gameObstacles = [];
+            // spawnTimer = initialSpawnTimer;
+            // gameSpeed = 3;
+            window.localStorage.setItem('highScore', gameArea.highScore);
+            //clearInterval(this.interval);
+            cancelAnimationFrame(gameLoop);
+            // score = 0;
+            //audioGameOver.play();
+        }
+    };
 
     //-----IMAGES
+    // var imgBackgroud = new Image();
+    // imgBackgroud.src = "./images/bg.png";
     
+    var imgPlayerDown = new Image();
+    imgPlayerDown.scr = "./images/4-fall.gif";
+
+    var imgPlayerWalk = new Image();
+    imgPlayerWalk.scr = "./images/2-walk.gif";
+    
+    class CreateImage{
+        constructor(){
+            this.img = new Image();
+            this.x = 0;
+            // this.id = id;
+            //this.ctx = gameArea;
+            this.speedBG = -0.5;
+            this.width = 1600;
+            this.height = 600;
+        }
+
+        move() {
+            this.x += this.speedBG;
+            this.x %= this.width;
+        }
+        
+        draw() {
+            this.img.src = "./images/bg.png";
+            gameArea.context.drawImage(this.img, this.x, 0, this.width, this.height);
+            if (this.speedBG < 0) {
+                gameArea.context.drawImage(this.img, this.x + this.width, 0, this.width, this.height);
+                console.log(this.img);
+                console.log(this.x);
+            }
+             else {
+               gameArea.context.drawImage(this.img, this.x - this.width, 0, this.width, this.height);
+             }
+            
+        }
+    }
+
+    var imgBackgroundObj = new CreateImage();
+      
 
     //INTERVAL
     function everyInterval(n){
@@ -78,14 +163,17 @@ window.onload = () => {
 
         update: function (){
             gameArea.context.fillStyle = "black";
-            gameArea.context.fillRect(this.x, this.y, 30, 30);    
+           gameArea.context.fillRect(this.x, this.y, 30, 30);    
+            //gameArea.context.drawImage(imgPlayerWalk, this.x, this.y, imgPlayerWalk.width, imgPlayerWalk.height);
         },
 
         jump(){
             if(this.isGrounded && this.jumpTimer === 0)
             {
-                this.jumpTimer = 1;;
+                this.jumpTimer = 1;
                 this.speedY = -this.jumpForce;
+                
+
             }
             else if(this.jumpTimer > 0 && this.jumpTimer < 15)
             {
@@ -93,28 +181,16 @@ window.onload = () => {
                 this.speedY = -this.jumpForce - (this.jumpTimer / 50);
             }
         },
-        // newPosition: function(){
-        //     if(this.y < 280)
+     
+        // crashWith: function(obs){
+        //     //Player.x + player.width > obstacle.x && player.x < obstacle.x + obstacle.width  && player.y > obstacle.y
+        //     if(this.x + 30 > obs.x && this.x < obs.x + obs.width && this.y + 30 > obs.y)
         //     {
-        //         this.speedY = 2;
-        //         console.log(this.speedY);
+        //         return true;
+        //     }else{
+        //         return false;
         //     }
-        //     this.y = this.y + this.speedY;
-
-        //     if(this.speedY === 2 && this.y === 470)
-        //     {
-        //         this.speedY = 0;
-        //     }
-        // }, 
-        crashWith: function(obs){
-            //Player.x + player.width > obstacle.x && player.x < obstacle.x + obstacle.width  && player.y > obstacle.y
-            if(this.x + 30 > obs.x && this.x < obs.x + obs.width && this.y + 30 > obs.y)
-            {
-                return true;
-            }else{
-                return false;
-            }
-        },
+        // },
 
         animate: function(){
 
@@ -148,13 +224,6 @@ window.onload = () => {
             }
         },
     };
-
-    //JUMP
-    // function jump(){
-       
-    //     player.speedY = -2;
-    //     //audioJump.play();
-    // }
 
     //-----EVENT LISTENERS
     document.addEventListener('keydown', function(e){
@@ -236,151 +305,23 @@ window.onload = () => {
         }
     }
 
-    //-----GAME CONTROL
-    var gameArea = {
-
-        canvas: document.createElement("canvas"),
-
-        start: function() {
-            this.canvas.height = 500;
-            this.canvas.width =  1200;
-            document.body.insertBefore(this.canvas, document.body.childNodes[0]);
-            this.context = this.canvas.getContext("2d");
-            this.gameSpeed = 3;
-            this.gravity = 1;
-            this.frame = 0;
-            this.score = 0;
-            this.highScore = 0;
-            // this.pause = false;
-            console.log(this.highScore);
-            scoreText.update("SCORE: 0");
-
-
-            if(window.localStorage.getItem('highScore'))
-            {
-                this.highScore = window.localStorage.getItem('highScore');
-            }
-            highScoreText.update("HIGHSCORE: " + this.highScore);
-
-            gameLoop = window.requestAnimationFrame(updateGame);// updateGame();//this.interval = setInterval(this.updateGameArea, 10); //window.requestAnimationFrame(this.updateGameArea());
-            //window.addEventListener("keydown", jump);
-        },
-
-        // updateGameArea: function (){
-
-            //CHECK COLLISION
-            // for(let i = 0; i < gameObstacles.length; i++)
-            // {
-            //     if(player.crashWith(gameObstacles[i]))
-            //     {
-            //         gameArea.stop();
-            //         return;
-            //     }
-            // }
-            
-
-            
-            // if(keys['KeyP'])
-            // {
-            //     if(!gamePaused){
-            //     gamePaused = true;
-            //     cancelAnimationFrame(updateGame);
-      
-            //     }
-            //     else{
-            //         gamePaused = false;
-            //     }
-            // }
-
-            // //CLEAR CANVAS
-            // gameArea.clear();
-            
-            // spawnTimer = spawnTimer - 1;
-            // if(spawnTimer <= 0)
-            // {
-            //     spawnObstacles();
-            //     console.log("New Obstacle");
-            //     spawnTimer = initialSpawnTimer - gameArea.gameSpeed * 8;
-                
-            //     if(spawnTimer < 60)
-            //     {
-            //         spawnTimer = 60;
-            //     }
-            // }
-
-            // for(let i = 0; i < gameObstacles.length; i++)
-            // {
-            //     let initObstacle = gameObstacles[i];
-
-            //     if(initObstacle.x + initObstacle.width < 0)
-            //     {
-            //         gameObstacles.splice(i,1);
-            //     }
-
-            //     if(player.x < initObstacle.x + initObstacle.width &&
-            //         player.x + player.width > initObstacle.x &&
-            //         player.y < initObstacle.y + initObstacle.height &&
-            //         player.y + player.height > initObstacle.y)
-            //     {
-            //         gameArea.stop();
-            //         return;
-            //     }
-
-            //     initObstacle.update();
-            // }
-            
-
-            // //UPDATE PLAYER
-           
-            // //player.newPosition();
-            // player.animate();
-            // player.update();
-            
-            // gameArea.gameSpeed = gameArea.gameSpeed + 0.003;
-           
-
-            // //TIME GENERATE OBSTACLE
-            // gameArea.frame = gameArea.frame + 1;
-
-            // //COUNT SCORE
-            // gameArea.score = gameArea.score + 1; //0.01;
-            // scoreText.update("SCORE: " + gameArea.score); //Math.floor(gameArea.score));
-            // //gameArea.highScore = gameArea.score;
-            // highScoreText.update("HIGHSCORE: " + gameArea.highScore);
-
-            // if(gameArea.score > gameArea.highScore)
-            // {
-            //     gameArea.highScore = gameArea.score;
-            //     highScoreText.update("HIGHSCORE: " + gameArea.highScore);
-            // }
-
-            // //Request
-            // updateGame();//window.requestAnimationFrame(updateGameArea);
-           
-        // },
-
-        clear: function () {
-            gameArea.context.clearRect(0,0, this.canvas.width, this.canvas.height);
-        },
-
-        stop: function (){
-            // gameObstacles = [];
-            // spawnTimer = initialSpawnTimer;
-            // gameSpeed = 3;
-            window.localStorage.setItem('highScore', gameArea.highScore);
-            //clearInterval(this.interval);
-            cancelAnimationFrame(gameLoop);
-            // score = 0;
-            //audioGameOver.play();
-        }
-    };
-
    function updateGame()
    {
-
        //CLEAR CANVAS
        gameArea.clear();
-    
+
+        //BACKGROUND IMGs
+       imgBackgroundObj.speedBG = -gameArea.gameSpeed/3;
+      // imgBackgroundObj2.speedBG = -gameArea.gameSpeed/3;
+       
+       imgBackgroundObj.draw();
+       imgBackgroundObj.move();
+    //    imgBackgroundObj2.draw(); 
+    //    imgBackgroundObj2.move();
+    //    console.log(imgBackgroundObj.x);
+    //    console.log(imgBackgroundObj2.x);
+      
+     
        //SPAWN OBSTACLES
        spawnTimer = spawnTimer - 1;
        if(spawnTimer <= 0)
@@ -441,8 +382,6 @@ window.onload = () => {
            highScoreText.update("HIGHSCORE: " + gameArea.highScore);
        }
 
-       //Request
-      // updateGame();//window.requestAnimationFrame(updateGameArea);
       if(!isGameOver)
       {
         gameLoop = requestAnimationFrame(updateGame);
