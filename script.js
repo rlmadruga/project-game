@@ -42,11 +42,13 @@ window.onload = () => {
     var gameLoop; 
     var gamePaused = false;
     var isGameOver = false;
+    var playerState = 0;
+    var changeHeight = 0;
     //var audioJump = document.getElementById("audio");
     //var audioGameOver = document.getElementById("audioGameOver");
     //var colors = ["black", "red", "green"];
 
-    //-----GAME CONTROL
+    //===== GAME CONTROL =====
     var gameArea = {
 
         canvas: document.createElement("canvas"),
@@ -91,18 +93,7 @@ window.onload = () => {
         }
     };
 
-    //-----IMAGES
-    // var imgBackgroud = new Image();
-    // imgBackgroud.src = "./images/bg.png";
-    
-    var imgPlayerDown = new Image();
-    imgPlayerDown.scr = "./images/4-fall.gif";
-
-    var imgPlayerWalk = new Image();
-    imgPlayerWalk.scr = "./images/2-walk.gif";
-
-    var imgPlayerJump = new Image();
-    imgPlayerJump.src = "./images/3-jump.gif";
+    //===== IMAGES ===== 
     
     class CreateImage{
         constructor(){
@@ -153,21 +144,76 @@ window.onload = () => {
         return Math.floor(minGap + Math.random() * (maxGap - minGap +1));
     }
 
-    //-----PLAYER
+    //===== SPRITESHEET =====
+    function spriteSheet(path, frameWidth, frameHeight)
+    {
+        this.image = new Image();
+        this.image.src = path;
+        this.frameWidth = frameWidth;
+        this.frameHeight = frameHeight;
+        
+        // var framesPerRow;
+        // var self = this;
+        this.framesPerRow = Math.floor(this.image.width / this.frameWidth); 
+        
+    }
+
+    function animationSprite(spritesheet, frameSpeed, startFrame, endFrame){
+
+        var animationSequence = [];
+        var currentFrame = 0;
+        var counter = 0;
+
+        for(let frameNumber = startFrame; frameNumber <= endFrame; frameNumber++)
+        {
+            animationSequence.push(frameNumber);
+        }
+           
+        this.update = function()
+        {
+               if(counter == (frameSpeed -1))
+                {
+                    currentFrame = (currentFrame +1) % animationSequence.length;
+                }
+                counter = (counter + 1) % frameSpeed;
+        };
+
+        this.draw = function (x,y)
+        {
+            var row = Math.floor(animationSequence[currentFrame] / spritesheet.framesPerRow);
+            var col = Math.floor(animationSequence[currentFrame] % spritesheet.framesPerRow);
+
+            gameArea.context.drawImage(spritesheet.image, 
+                col * spritesheet.frameWidth, row* spritesheet.frameHeight, spritesheet.frameWidth, spritesheet.frameHeight,
+                x, y, 
+                spritesheet.frameWidth, spritesheet.frameHeight); 
+        };
+    }
+
+    var playerSprite =  new spriteSheet("./images/caverman.png", 97, 71);
+    var walkSprite = new animationSprite(playerSprite, 4, 7, 13);
+    var downSprite = new animationSprite(playerSprite, 4, 21, 23);
+
+
+    //===== PLAYER =====
     var player = {
-        x: 20,
-        y: 500 - 150, 
-        height: 30,
-        width: 30,
+        x: 200,
+        y: 600 - 150, 
+        height: 65, //71
+        width: 44, //97
         speedY: 0,
         jumpForce: 15,
-        originalHeight: 30,
+        originalHeight: 65, //30
         isGrounded: false,
         jumpTimer: 0,
-
+       
         update: function (){
-            gameArea.context.fillStyle = "black";
-            gameArea.context.fillRect(this.x, this.y, 30, 30);    
+
+            // walkSprite.update();
+            // walkSprite.draw();
+            
+            // gameArea.context.fillStyle = "black";
+            // gameArea.context.fillRect(this.x, this.y, 30, 30);    
             //gameArea.context.drawImage(imgPlayerWalk, this.x, this.y, imgPlayerWalk.width, imgPlayerWalk.height);
         },
 
@@ -207,9 +253,14 @@ window.onload = () => {
 
             if(keys['ArrowDown'])
             {
-                this.height = this.originalHeight/2;
+                playerState = 1;
+                console.log(this.y);
+                //this.originalHeight = 65;
+                this.height = this.originalHeight; ///2;
             }else{
+                this.originalHeight = 65;
                 this.height = this.originalHeight;
+                playerState = 0;
             }
 
             this.y = this.y + this.speedY;
@@ -226,11 +277,19 @@ window.onload = () => {
                 player.isGrounded = true;
                 player.y = gameArea.canvas.height - this.height;
             }
-            this.update();
+            //this.update();
+            if(playerState === 0)
+            {
+                walkSprite.draw(this.x, this.y);
+            }
+            
         },
     };
 
-    //-----EVENT LISTENERS
+    
+
+
+    //=====EVENT LISTENERS =====
     document.addEventListener('keydown', function(e){
         keys[e.code] = true;
     });
@@ -241,7 +300,7 @@ window.onload = () => {
 
 
 
-    //-----OBSTACLES
+    //=====OBSTACLES =====
     function obstacle(){
         this.height = size;// Math.floor(minHeight + Math.random() * (maxHeight-minHeight +1));
         this.width = size;//Math.floor(minWidth + Math.random() * (maxWidth-minWidth +1));
@@ -285,7 +344,7 @@ window.onload = () => {
     }
 
 
-    //-----SCORE
+    //===== SCORE =====
     var scoreText = {
         x: 50,
         y: 50,
@@ -299,7 +358,7 @@ window.onload = () => {
     }
 
     var highScoreText = {
-        x: 800, 
+        x: 850, 
         y: 50, 
         update: function(text){
             gameArea.context.fillStyle = "white";
@@ -310,17 +369,18 @@ window.onload = () => {
         }
     }
 
+   //======UPDATE GAME=====
    function updateGame()
    {
        //CLEAR CANVAS
        gameArea.clear();
 
-        //BACKGROUND IMGs
+        //BACKGROUND IMG
        imgBackgroundObj.speedBG = -gameArea.gameSpeed/3;      
        imgBackgroundObj.draw();
        imgBackgroundObj.move();
     
-     
+      
        //SPAWN OBSTACLES
        spawnTimer = spawnTimer - 1;
        if(spawnTimer <= 0)
@@ -345,9 +405,9 @@ window.onload = () => {
            }
 
            if(player.x < initObstacle.x + initObstacle.width &&
-               player.x + player.width > initObstacle.x &&
+               player.x + (player.width) > initObstacle.x &&
                player.y < initObstacle.y + initObstacle.height &&
-               player.y + player.height > initObstacle.y)
+               player.y + (player.height - changeHeight) > initObstacle.y)
            {
                 isGameOver = true;
                 gameOver(isGameOver);
@@ -359,8 +419,24 @@ window.onload = () => {
 
        //UPDATE PLAYER
        player.animate();
-       player.update();
+       //player.update();
+       if(playerState === 0) {
+            walkSprite.update();
+            walkSprite.draw(player.x, player.y);
+            changeHeight = 0;
+       }
+       else if(playerState === 1)
+       {
+           changeHeight = -30;
+           console.log(playerState);
+           downSprite.update();
+           downSprite.draw(player.x, player.y);
+       }
        
+       //console.log(player.y);
+       //playerSprite.draw(player.x, player.y);
+
+
        gameArea.gameSpeed = gameArea.gameSpeed + 0.003;
       
 
@@ -399,6 +475,13 @@ window.onload = () => {
         gameArea.context.globalAlpha = 0.8;
         gameArea.context.fillStyle = "#B37746";
         
+        //Score Background
+        gameArea.context.fillRect(40, 12, 230, 50);
+        
+        //Highscore Background
+        gameArea.context.fillRect(840, 12, 330, 50);
+        
+        //Game Over Background
         gameArea.context.fillRect(310,170, 550, 250);
         gameArea.context.globalAlpha = 1;
 
