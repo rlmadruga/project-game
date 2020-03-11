@@ -3,8 +3,11 @@ window.onload = () => {
     document.getElementById('start-game').onclick = () => {
         startGame();
         document.getElementById('bg-start').style.visibility = 'hidden';
+        document.getElementById('triangle-up').style.visibility = 'hidden';
+        document.getElementById('triangle-down').style.visibility = 'hidden';
         document.getElementById('start-game').style.visibility = 'hidden';
         document.getElementById('retry-game').style.visibility = 'visible';
+       
     };
 
     document.getElementById('retry-game').onclick = () =>{
@@ -97,6 +100,9 @@ window.onload = () => {
 
     var imgPlayerWalk = new Image();
     imgPlayerWalk.scr = "./images/2-walk.gif";
+
+    var imgPlayerJump = new Image();
+    imgPlayerJump.src = "./images/3-jump.gif";
     
     class CreateImage{
         constructor(){
@@ -119,8 +125,6 @@ window.onload = () => {
             gameArea.context.drawImage(this.img, this.x, 0, this.width, this.height);
             if (this.speedBG < 0) {
                 gameArea.context.drawImage(this.img, this.x + this.width, 0, this.width, this.height);
-                console.log(this.img);
-                console.log(this.x);
             }
              else {
                gameArea.context.drawImage(this.img, this.x - this.width, 0, this.width, this.height);
@@ -163,7 +167,7 @@ window.onload = () => {
 
         update: function (){
             gameArea.context.fillStyle = "black";
-           gameArea.context.fillRect(this.x, this.y, 30, 30);    
+            gameArea.context.fillRect(this.x, this.y, 30, 30);    
             //gameArea.context.drawImage(imgPlayerWalk, this.x, this.y, imgPlayerWalk.width, imgPlayerWalk.height);
         },
 
@@ -173,7 +177,6 @@ window.onload = () => {
                 this.jumpTimer = 1;
                 this.speedY = -this.jumpForce;
                 
-
             }
             else if(this.jumpTimer > 0 && this.jumpTimer < 15)
             {
@@ -216,12 +219,14 @@ window.onload = () => {
                 this.speedY = this.speedY + gravity;
                 this.isGrounded = false;
                 console.log(this.isGrounded);
+
             }
             else{
                 player.speedY = 0;
                 player.isGrounded = true;
                 player.y = gameArea.canvas.height - this.height;
             }
+            this.update();
         },
     };
 
@@ -311,16 +316,10 @@ window.onload = () => {
        gameArea.clear();
 
         //BACKGROUND IMGs
-       imgBackgroundObj.speedBG = -gameArea.gameSpeed/3;
-      // imgBackgroundObj2.speedBG = -gameArea.gameSpeed/3;
-       
+       imgBackgroundObj.speedBG = -gameArea.gameSpeed/3;      
        imgBackgroundObj.draw();
        imgBackgroundObj.move();
-    //    imgBackgroundObj2.draw(); 
-    //    imgBackgroundObj2.move();
-    //    console.log(imgBackgroundObj.x);
-    //    console.log(imgBackgroundObj2.x);
-      
+    
      
        //SPAWN OBSTACLES
        spawnTimer = spawnTimer - 1;
@@ -329,7 +328,7 @@ window.onload = () => {
            spawnObstacles();
            console.log("New Obstacle");
            spawnTimer = initialSpawnTimer - gameArea.gameSpeed * 8;
-           
+           console.log(spawnTimer);
            if(spawnTimer < 60)
            {
                spawnTimer = 60;
@@ -350,8 +349,6 @@ window.onload = () => {
                player.y < initObstacle.y + initObstacle.height &&
                player.y + player.height > initObstacle.y)
            {
-            //    gameArea.stop();
-            //    return;
                 isGameOver = true;
                 gameOver(isGameOver);
            }
@@ -398,6 +395,18 @@ window.onload = () => {
             gameArea.highScore = gameArea.score;
             highScoreText.update("HIGHSCORE: " + gameArea.highScore);
         }
+        
+        gameArea.context.globalAlpha = 0.8;
+        gameArea.context.fillStyle = "#B37746";
+        
+        gameArea.context.fillRect(310,170, 550, 250);
+        gameArea.context.globalAlpha = 1;
+
+        gameArea.context.fillStyle = "white";
+        gameArea.context.font = "bold 200px VT323";
+        gameArea.context.fillText("OH NO!", 350, 350);
+        
+
         gameArea.stop();
    }
 

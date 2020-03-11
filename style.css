@@ -51,12 +51,54 @@ p{
   text-shadow: 1px 1px 1px #000000;
 }
 
+#triangle-down {
+	width: 0;
+  height: 0;
+  margin: 0 auto;
+  position: absolute;
+  left: 700px;
+  top: 850px;
+	border-left: 15px solid transparent;
+	border-right: 15px solid transparent;
+  border-top: 30px solid #B37746;
+  box-shadow: 0px -5px #666;
+}
+
+#triangle-up{
+  width: 0;
+  height: 0;
+  margin: 0 auto;
+  position: absolute;
+  left: 700px;
+  top: 800px;
+	border-left: 15px solid transparent;
+	border-right: 15px solid transparent;
+  border-bottom: 30px solid #B37746;
+  box-shadow: 0 5px #666;
+
+}
+
+h2{
+  margin: 0 auto;
+  position: absolute;
+  font-family: inherit;
+  color: #fff;
+  left: 40px;
+  font-size: 24px;
+  font-weight: 500;
+  background-color:transparent;
+  text-shadow: 1px 1px 1px #000000;
+  width: 100px;
+  line-height: 40px;
+ 
+}
+
 #retry-game, #start-game{
  
   margin: 0 auto;
   position: absolute;
   font-family: inherit;
-  left: 800px;
+  left: 900px;
   top: 800px;
   padding: 15px 25px;
   font-size: 24px;
@@ -72,7 +114,11 @@ p{
   visibility: hidden;
   font-weight: 600;
   letter-spacing: 2px;
-  
+  text-shadow: 1px 1px 1px #000000;
+}
+
+#retry-game{
+  left: 800px;
 }
 
 #start-game{
