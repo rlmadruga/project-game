@@ -38,6 +38,9 @@ window.onload = () => {
     let size;
     let initialSpawnTimer = 200;
     let spawnTimer = initialSpawnTimer;
+    // let pickObstacleFlying;
+    // let pickObstacleGround;
+    let obstacleNumber;
 
     var gameLoop; 
     var gamePaused = false;
@@ -151,15 +154,16 @@ window.onload = () => {
         this.image.src = path;
         this.frameWidth = frameWidth;
         this.frameHeight = frameHeight;
-        
+        this.framesPerRow = Math.floor(this.image.width / this.frameWidth); 
         // var framesPerRow;
         // var self = this;
-        this.framesPerRow = Math.floor(this.image.width / this.frameWidth); 
+        
         
     }
 
     function animationSprite(spritesheet, frameSpeed, startFrame, endFrame){
 
+        console.log(spritesheet);
         var animationSequence = [];
         var currentFrame = 0;
         var counter = 0;
@@ -190,14 +194,19 @@ window.onload = () => {
         };
     }
 
+    //===== PLAYER ANIMATIONS =====
     var playerSprite =  new spriteSheet("./images/caverman.png", 97, 71);
-    var walkSprite = new animationSprite(playerSprite, 4, 7, 13);
-    var downSprite = new animationSprite(playerSprite, 4, 21, 23);
+    var walkSprite = new animationSprite(playerSprite, 4, 7, 13); //0
+    var downSprite = new animationSprite(playerSprite, 4, 21, 23); //1
+    var jumpSprite = new animationSprite(playerSprite, 4, 14, 16); //2
+    var fallSPrite = new animationSprite(playerSprite, 4, 17, 19); //3
+    var playerGameOverSprite = new spriteSheet("./images/fire-meat.png", 84, 55);
+    var playerGameOverAnin = new animationSprite(playerGameOverSprite, 4, 0, 3);
 
 
     //===== PLAYER =====
     var player = {
-        x: 200,
+        x: 100,
         y: 600 - 150, 
         height: 65, //71
         width: 44, //97
@@ -220,14 +229,17 @@ window.onload = () => {
         jump(){
             if(this.isGrounded && this.jumpTimer === 0)
             {
+                playerState = 2;
                 this.jumpTimer = 1;
                 this.speedY = -this.jumpForce;
+                
                 
             }
             else if(this.jumpTimer > 0 && this.jumpTimer < 15)
             {
                 this.jumpTimer = this.jumpTimer + 1;
                 this.speedY = -this.jumpForce - (this.jumpTimer / 50);
+                playerState = 2;
             }
         },
      
@@ -246,15 +258,17 @@ window.onload = () => {
             if(keys['ArrowUp'])
             {
                 this.jump();
+                // playerState = 2;
+                console.log(playerState);
             }
             else{
+                playerState = 0;
                 this.jumpTimer = 0;
             }
 
             if(keys['ArrowDown'])
             {
                 playerState = 1;
-                console.log(this.y);
                 //this.originalHeight = 65;
                 this.height = this.originalHeight; ///2;
             }else{
@@ -267,15 +281,16 @@ window.onload = () => {
 
             if(player.y + player.height < gameArea.canvas.height)
             {
+                playerState = 3;
                 this.speedY = this.speedY + gravity;
                 this.isGrounded = false;
-                console.log(this.isGrounded);
-
+                // console.log(this.isGrounded);
             }
             else{
                 player.speedY = 0;
                 player.isGrounded = true;
                 player.y = gameArea.canvas.height - this.height;
+                //playerState = 0;
             }
             //this.update();
             if(playerState === 0)
@@ -285,8 +300,6 @@ window.onload = () => {
             
         },
     };
-
-    
 
 
     //=====EVENT LISTENERS =====
@@ -298,48 +311,226 @@ window.onload = () => {
         keys[e.code] = false;
     });
 
-
-
-    //=====OBSTACLES =====
-    function obstacle(){
-        this.height = size;// Math.floor(minHeight + Math.random() * (maxHeight-minHeight +1));
-        this.width = size;//Math.floor(minWidth + Math.random() * (maxWidth-minWidth +1));
-        this.x = gameArea.canvas.width + size; //1200
-        this.y = gameArea.canvas.height - size;//this.height;
-        //this.index = Math.floor(Math.random() * colors.length);
-        //this.color = colors[this.index];
-        this.speedX = - gameArea.gameSpeed;
-        this.draw = function(){
-            //gameArea.context.fillStyle = this.color;
-            gameArea.context.fillStyle = "black";
-            gameArea.context.fillRect(this.x, this.y, this.width, this.height);
-        }
-
-        this.update = function(){
-            this.x = this.x + this.speedX;
-            this.draw();
-            this.speedX = - gameArea.gameSpeed;
-        }
-    }
-
     function randomInRange(min, max)
     {
         return Math.round(Math.random()*(max-min) + min);
     }
 
+
+    //===== OBSTACLES SPRITES =====
+    var plantSprite =  new spriteSheet("./images/plant-1.png", 135, 85); //1
+    var plantAninSprite = new animationSprite(plantSprite, 5, 0, 14);  
+
+    // var plantSprite = {
+    //     sprite: new spriteSheet("./images/plant-1.png", 135, 85),
+    //     animation: new animationSprite(new spriteSheet("./images/plant-1.png",135,85), 4, 0, 14), 
+    //     width: 62,
+    //     height: 42,
+    //     x: 1200 + 62,
+    //     y: 600- 42,
+    //     speedX: - gameArea.gameSpeed/3,
+
+    //     // move(){
+    //     //     this.x = this.x + this.speedX;
+    //     //     // this.speedX = - gameArea.gameSpeed/3;
+    //     // }
+    // };
+
+    var miniTyrSprite =  new spriteSheet("./images/mini-tyrannosaurus-2.png", 80, 69); //2
+    var miniTyrAninSprite = new animationSprite(miniTyrSprite, 5, 6, 11); 
+
+    // var miniTyrSprite = {
+    //     sprite: new spriteSheet("./images/mini-tyrannosaurus-2.png", 80, 70),
+    //     animation: new animationSprite(new spriteSheet("./images/mini-tyrannosaurus-2.png", 80, 70), 4, 6, 11),  
+    //     width: 40,
+    //     height: 35,
+    //     x: 1200 + 40,
+    //     y: 600 - 35,
+    //     speedX: - gameArea.gameSpeed/3,
+        
+    //     // move(){
+    //     //     this.x = this.x + this.speedX;
+            
+    //     // }
+    // };
+
+    var tyrSprite =  new spriteSheet("./images/tyrannosaurus-2.png", 151, 105); //3
+    var tyrAninSprite = new animationSprite(tyrSprite, 5, 7, 18);
+
+    // var tyrSprite = {
+    //     sprite: new spriteSheet("./images/tyrannosaurus-2.png", 151, 105),
+    //     animation: new animationSprite(new spriteSheet("./images/tyrannosaurus-2.png", 151, 105), 4, 7, 18),  
+    //     width: 70,
+    //     height: 50,
+    //     x: 1200 + 70,
+    //     y: 600 - 50,
+    //     speedX: - gameArea.gameSpeed/3,
+        
+    //     // move(){
+    //     //     this.x = this.x + this.speedX;
+            
+    //     // }
+    // };
+
+ 
+    //FLYING ENEMIES
+    var pteroSprite =  new spriteSheet("./images/pterodactyl-1.png", 126, 113); //1
+    var pteroAninSprite = new animationSprite(pteroSprite, 5, 0, 7);
+
+    // var pteroSprite = {
+    //     sprite: new spriteSheet("./images/pterodactyl-1.png", 126, 113),
+    //     animation: new animationSprite(new spriteSheet("./images/pterodactyl-1.png", 126, 113), 4, 0, 7),  
+    //     width: 63,
+    //     height: 62,
+    //     x: 1200 + 63,
+    //     y: 600- randomInRange(100, 500),
+    //     speedX: - gameArea.gameSpeed/3,
+        
+    //     // move(){
+    //     //     this.x = this.x + this.speedX;
+            
+    //     // }
+    // };
+
+    var batSprite =  new spriteSheet("./images/bat-1.png", 52, 57); //2
+    var batAninSprite = new animationSprite(batSprite, 5, 0, 7);
+
+    // var batSprite = {
+    //     sprite: new spriteSheet("./images/bat-1.png", 51, 57),
+    //     animation: new animationSprite(new spriteSheet("./images/bat-1.png", 51, 57), 4, 0, 7),  
+    //     width: 51 *1.5,
+    //     height: 52 *1.5,
+    //     x: 1200 + (51 *1.5),
+    //     y: 600 - randomInRange(100, 500),
+    //     speedX: - gameArea.gameSpeed/3,
+        
+    //     // move(){
+    //     //     this.x = this.x + this.speedX;
+           
+    //     // }
+    // };
+
+    var dragonSprite =  new spriteSheet("./images/dragon-1.png", 98, 65); //3
+    var dragonAninSprite = new animationSprite(dragonSprite, 5, 0, 7);
+   
+
+    // var dragonSprite = {
+    //     sprite: new spriteSheet("./images/dragon-1.png", 98, 65),
+    //     animation: new animationSprite(new spriteSheet("./images/dragon-1.png", 98, 65), 4, 0, 7),  
+    //     width: 44,
+    //     height: 32,
+    //     x: 1200 + 44,
+    //     y: 600 - randomInRange(100, 500),
+    //     speedX: - gameArea.gameSpeed/3,
+        
+    //     // move(){
+    //     //     this.x = this.x + this.speedX;
+    //     //     console.log(this.x, this.speedX);
+            
+    //     // }
+    // };
+
+    // var arr = [plantSprite, tyrSprite, miniTyrSprite, pteroSprite, batSprite, dragonSprite];
+    
+
+    //===== OBSTACLES =====
+
+
+    function obstacle(){
+       
+       
+        this.height = 0;// Math.floor(minHeight + Math.random() * (maxHeight-minHeight +1));
+        this.width = 0;//Math.floor(minWidth + Math.random() * (maxWidth-minWidth +1));
+        this.x = 1200; //1200
+        this.y = 0;
+        this.id = 0;
+        this.speedX = - gameArea.gameSpeed;
+
+        this.move = function(){
+            this.x = this.x + this.speedX;
+            // console.log(`X: ${this.x}`);
+            this.speedX = - gameArea.gameSpeed;
+        };
+    }
+
+    // function spawnFlying(x, y, obs)
+    // {
+    //     dragonAninSprite.update();
+    //     dragonAninSprite.draw(x,y);
+    //     obs.move();
+    //     if(obs.x + obs.width < 0)
+    //     {
+
+    //     }
+        
+    // }
+    
     function spawnObstacles()
     {
-        size = randomInRange(20, 70);
-        let type = randomInRange(0,1);
+        let type = randomInRange(0,1);     
+        
+        size = randomInRange(100, 400); //100 -510
+        let obs = new obstacle();
+        // console.log(`TYPE: ${type}`);
+        if(type === 1){
+            // console.log(obs);
+            let pickObstacle = Math.floor(Math.random() * (3-1) +1);
+            console.log(pickObstacle);
+            if(pickObstacle === 1)
+            {
+               obs.id = 1;
+              obs.width = 126 -15;
+              obs.height = 113 -10;
+              obs.y = 600 - size;
+              console.log("PTERO");
+            }
+            else if(pickObstacle === 2) 
+            {
+                obs.id= 2;
+              obs.width = 51;
+              obs.height = 57;
+              obs.y = 600 - size;
+              console.log("BAT");
+            }   
+            else if(pickObstacle === 3) 
+            {
+                obs.id = 3;
+              obs.width = 98;
+              obs.height = 65;
+              obs.y = 600 - size; 
+              console.log("DRAGON");
+            } 
+        }else{
 
-        let obs= new obstacle();
-        
-        if(type === 1)
-        {
-            obs.y = obs.y - player.originalHeight -10;
+            let pickObstacleGround = Math.floor(Math.random() * (3 - 1)  + 1);
+            console.log(`PICKGROUNG: ${pickObstacleGround}`);
+            if(pickObstacleGround === 1)
+            {
+                obs.id = 4;
+              obs.width = plantSprite.frameWidth -10;
+              obs.height = plantSprite.frameHeight-5;
+              obs.y = 600 - obs.height;
+              console.log("PLANT");
+            }
+            else if(pickObstacleGround === 2) 
+            {
+                obs.id = 5;
+              obs.width = miniTyrSprite.frameWidth -10;
+              obs.height = miniTyrSprite.frameHeight -10;
+              obs.y = 610 - obs.height;
+              console.log("MINI");
+            }   
+            else if(pickObstacleGround === 3) 
+            {
+                obs.id = 6;
+              obs.width = tyrSprite.frameWidth;
+              obs.height = tyrSprite.frameHeight;
+              obs.y = 600 - obs.height;
+              console.log("TYR");
+            } 
         }
-        
         gameObstacles.push(obs);
+       
 
     }
 
@@ -350,10 +541,8 @@ window.onload = () => {
         y: 50,
         update: function(text){
             gameArea.context.fillStyle = "white";
-            //gameArea.context.strokeStyle = "black";
             gameArea.context.font = "50px VT323";
             gameArea.context.fillText(text, this.x, this.y);
-            //gameArea.context.strokeText(text, this.x, this.y);
         }
     }
 
@@ -369,7 +558,7 @@ window.onload = () => {
         }
     }
 
-   //======UPDATE GAME=====
+   //====== UPDATE GAME =====
    function updateGame()
    {
        //CLEAR CANVAS
@@ -388,32 +577,88 @@ window.onload = () => {
            spawnObstacles();
            console.log("New Obstacle");
            spawnTimer = initialSpawnTimer - gameArea.gameSpeed * 8;
-           console.log(spawnTimer);
+        //    console.log(spawnTimer);
            if(spawnTimer < 60)
-           {
-               spawnTimer = 60;
+           {    
+               if(gameArea.score >= 3000 && gameArea.score < 5000)
+               {
+                spawnTimer = 50;
+               }
+                else if(gameArea.score >= 1000 && gameArea.score < 3000)
+                {
+                    spawnTimer = 55;
+                }
+                spawnTimer = 60;
            }
        }
 
        for(let i = 0; i < gameObstacles.length; i++)
        {
+           console.log("ENTROU FOR");
            let initObstacle = gameObstacles[i];
+            console.log(initObstacle);
+           if(player.x < initObstacle.x + initObstacle.width &&
+            player.x + (player.width) > initObstacle.x && 
+            player.y < initObstacle.y + initObstacle.height &&
+            player.y + (player.height - changeHeight) > initObstacle.y)
+            {
+                gameArea.clear();
+                playerGameOverAnin.update();
+                playerGameOverAnin.draw(530,400);
+                isGameOver = true;
+                gameOver(isGameOver);
+            }
+           
+            if(initObstacle.id === 1)
+            {
+                pteroAninSprite.update();
+                pteroAninSprite.draw(initObstacle.x, initObstacle.y);
+                initObstacle.move();
+                
+            }
+            else if(initObstacle.id === 2)
+            {
+                batAninSprite.update();
+                batAninSprite.draw(initObstacle.x, initObstacle.y);
+                initObstacle.move();
+            }
+            else if(initObstacle.id === 3)
+            {
+                dragonAninSprite.update();
+                dragonAninSprite.draw(initObstacle.x, initObstacle.y);
+                initObstacle.move();
+            }
+            else if(initObstacle.id === 4)
+            {
+                plantAninSprite.update();
+                plantAninSprite.draw(initObstacle.x, initObstacle.y);
+                initObstacle.move();
+            }
+            else if(initObstacle.id === 5)
+            {
+                miniTyrAninSprite.update();
+                miniTyrAninSprite.draw(initObstacle.x, initObstacle.y);
+                initObstacle.move();
+            }
+            else if(initObstacle.id === 6)
+            {
+                tyrAninSprite.update();
+                tyrAninSprite.draw(initObstacle.x, initObstacle.y);
+                initObstacle.move();
+            }
 
+
+            //    initObstacle.animation.update();
+            //     initObstacle.animation.draw(initObstacle.x, initObstacle.y);
+            //     //initObstacle.x = initObstacle.x + initObstacle.speedX;
+            
+            //     initObstacle.x = initObstacle.x + 10;
            if(initObstacle.x + initObstacle.width < 0)
            {
                gameObstacles.splice(i,1);
            }
-
-           if(player.x < initObstacle.x + initObstacle.width &&
-               player.x + (player.width) > initObstacle.x &&
-               player.y < initObstacle.y + initObstacle.height &&
-               player.y + (player.height - changeHeight) > initObstacle.y)
-           {
-                isGameOver = true;
-                gameOver(isGameOver);
-           }
-
-           initObstacle.update();
+           
+        //    initObstacle.update();
        }
        
 
@@ -432,6 +677,17 @@ window.onload = () => {
            downSprite.update();
            downSprite.draw(player.x, player.y);
        }
+       else if(playerState === 2)
+       {
+            jumpSprite.update();
+            jumpSprite.draw(player.x, player.y);
+       }
+       else if(playerState === 3)
+       {
+           fallSPrite.update();
+           fallSPrite.draw(player.x, player.y);
+       }
+       
        
        //console.log(player.y);
        //playerSprite.draw(player.x, player.y);
@@ -463,7 +719,7 @@ window.onload = () => {
    }
    
    function gameOver(isGameOver)
-   {
+   {    
         highScoreText.update("HIGHSCORE: " + gameArea.highScore);
 
         if(gameArea.score >= gameArea.highScore)
@@ -472,23 +728,24 @@ window.onload = () => {
             highScoreText.update("HIGHSCORE: " + gameArea.highScore);
         }
         
-        gameArea.context.globalAlpha = 0.8;
+        gameArea.context.globalAlpha = 1;
         gameArea.context.fillStyle = "#B37746";
         
         //Score Background
-        gameArea.context.fillRect(40, 12, 230, 50);
+        gameArea.context.fillRect(40, 12, 250, 50);
         
         //Highscore Background
         gameArea.context.fillRect(840, 12, 330, 50);
         
         //Game Over Background
-        gameArea.context.fillRect(310,170, 550, 250);
+        gameArea.context.fillRect(0,0, gameArea.canvas.width, gameArea.canvas.height); //310,170, 550, 250
         gameArea.context.globalAlpha = 1;
 
         gameArea.context.fillStyle = "white";
         gameArea.context.font = "bold 200px VT323";
-        gameArea.context.fillText("OH NO!", 350, 350);
-        
+        gameArea.context.fillText("OH NO!", 390, 350);
+
+       
 
         gameArea.stop();
    }
