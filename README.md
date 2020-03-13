@@ -14,7 +14,10 @@ Para ter uma melhor experiência, jogue no Desktop ou Notebook. Este jogo ainda 
 
 # Como jogar?
 Logo na tela de início, pressione Start para começar. 
-Use as setas direcionais do teclado para controlar o Yabba. Com a tecla Up, você pula e Down, rola. Cuidado para não colidir com os inimigos que tentam transformá-lo em comida! 
+
+Use as setas direcionais do teclado para controlar o Yabba. 
+Com a tecla Up, você pula e Down, rola. 
+Cuidado para não colidir com os inimigos que tentam transformá-lo em comida! 
 
 ![](images/gameplay.png)
 
@@ -24,11 +27,11 @@ Esse jogo foi feito com:
 - Sprites by [Superpowers](https://github.com/sparklinlabs/superpowers-asset-packs/tree/master/prehistoric-platformer "Superpowers") 
 
 # Metas 
--Adicionar Música/Efeitos Sonoros
--Melhorar o Spawn de Inimigos 
--Novos personagens e desafios
--Novas animações
--Refatorar o código
+- Adicionar Música/Efeitos Sonoros
+- Melhorar o Spawn de Inimigos 
+- Novos personagens e desafios
+- Novas animações
+- Refatorar o código
 
 # Saiba mais!
 Quer conhecer um pouco mais sobre quem vos fala e sua jornada? Clique [aqui](http://tiny.cc/2fc9kz "aqui")!
