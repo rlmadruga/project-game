@@ -7,19 +7,21 @@ Ajude Yabba Dabba a sobreviver na Era das Cavernas!
 ![](images/startGameimg.png)
 
 Você pode jogá-lo online clicando [aqui](http://tiny.cc/8hc9kz "aqui")!
+
 OU, clone ou faça o download deste projeto, e abra o arquivo index.html no browser e divirta-se!
 
-Para ter uma melhor experiência, jogue no Desktop ou Notebook. Este jogo ainda não é responsivo para outros tamanhos de tela. 
+Para ter uma melhor experiência, jogue no Desktop ou Notebook. 
+
+Este jogo ainda não é responsivo para outros tamanhos de tela. 
 
 # Como jogar?
 
+![](images/gameplay.png)
 - Pressione Start para começar. 
 - Cuidado com os inimigos! 
 - Use as teclas direcionais do teclado.  
 - Up para pular e Down para rolar.
 - Sobreviva!
-
-![](images/gameplay.png)
 
 # Detalhes Técnicos
 Esse jogo foi feito com:
