@@ -208,7 +208,7 @@ window.onload = () => {
     var player = {
         x: 100,
         y: 600 - 150, 
-        height: 65, //71
+        height: 60, //71
         width: 44, //97
         speedY: 0,
         jumpForce: 15,
@@ -594,17 +594,17 @@ window.onload = () => {
 
        for(let i = 0; i < gameObstacles.length; i++)
        {
-           console.log("ENTROU FOR");
+        //    console.log("ENTROU FOR");
            let initObstacle = gameObstacles[i];
-            console.log(initObstacle);
+            // console.log(initObstacle);
            if(player.x < initObstacle.x + initObstacle.width &&
             player.x + (player.width) > initObstacle.x && 
             player.y < initObstacle.y + initObstacle.height &&
             player.y + (player.height - changeHeight) > initObstacle.y)
             {
-                gameArea.clear();
-                playerGameOverAnin.update();
-                playerGameOverAnin.draw(530,400);
+                // gameArea.clear();
+                // playerGameOverAnin.update();
+                // playerGameOverAnin.draw(530,400);
                 isGameOver = true;
                 gameOver(isGameOver);
             }
@@ -728,7 +728,7 @@ window.onload = () => {
             highScoreText.update("HIGHSCORE: " + gameArea.highScore);
         }
         
-        gameArea.context.globalAlpha = 1;
+        gameArea.context.globalAlpha = 0.8;
         gameArea.context.fillStyle = "#B37746";
         
         //Score Background
@@ -738,12 +738,12 @@ window.onload = () => {
         gameArea.context.fillRect(840, 12, 330, 50);
         
         //Game Over Background
-        gameArea.context.fillRect(0,0, gameArea.canvas.width, gameArea.canvas.height); //310,170, 550, 250
+        gameArea.context.fillRect(310, 170, 570, 250); //310,170, 550, 250
         gameArea.context.globalAlpha = 1;
 
         gameArea.context.fillStyle = "white";
         gameArea.context.font = "bold 200px VT323";
-        gameArea.context.fillText("OH NO!", 390, 350);
+        gameArea.context.fillText("OH NO!", 370, 350);
 
        
 
