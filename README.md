@@ -5,6 +5,7 @@ Ajude Yabba Dabba a sobreviver na Era das Cavernas!
 
 # Game 
 ![](images/startGameimg.png)
+
 Você pode jogá-lo online clicando [aqui](http://tiny.cc/8hc9kz "aqui")!
 
 Lá você tem as instruções e pode se ~~divertir~~ ajudar o nosso amigo Yabba Dabba. 
